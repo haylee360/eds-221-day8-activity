@@ -1,0 +1,41 @@
+---
+title: "Data vizualization practice"
+author: "Haylee Oyler"
+format: html
+editor: source
+execute:
+  warning: false
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+#### Setup
+```{r}
+rm(list = ls())
+library(tidyverse)
+library(here)
+library(janitor)
+library(skimr)
+```
+
+## Do your data viz worst
+
+```{r}
+# Read in data ----
+space_launches <- read_csv(here("data", "space_launches.csv"))
+```
+
+```{r}
+#| eval: false
+# Check it out ----
+skim(space_launches)
+dim(space_launches)
+summary(space_launches)
+```
+
+```{r}
+# worst possible viz ----
+ggplot(space_launches, aes(x = ))
+```
+
