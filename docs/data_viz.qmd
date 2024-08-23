@@ -18,6 +18,16 @@ library(here)
 library(janitor)
 library(skimr)
 library(extrafont)
+library(ggimage)
+# Specifically for plots:
+library(patchwork)
+library(ggrepel)
+library(gghighlight)
+library(paletteer)
+library(ggExtra)
+library(ggbeeswarm)
+library(ggstream)
+library(RColorBrewer)
 ```
 
 ## Do your data viz worst
@@ -57,12 +67,11 @@ ggplot(comb_ys, aes(x = launch_year, y = state_code)) +
   scale_fill_gradientn(colors = c("slateblue4", "orangered", "olivedrab", "khaki")) +
   theme(panel.background = element_rect(color = "purple", size = 12, fill = "yellow3"),
         panel.grid.major = element_line(color = "red"),
-        axis.text.x = element_text(color = "blue"),
-        axis.text.y = element_text(color = "deeppink"),
-        axis.title.x = element_text(color = "yellowgreen"),
-        axis.title.y = element_text(color = "gray70"),
-        text = element_text(size = 13, family= "gabriola"),
-        title = element_text(color = "aquamarine4"), 
+        axis.text.x = element_text(color = "blue", size = 13, family= "Ink Free"),
+        axis.text.y = element_text(color = "deeppink", size = 13, family= "Ink Free"),
+        axis.title.x = element_text(color = "yellowgreen", size = 15, family= "Segoe Print"),
+        axis.title.y = element_text(color = "gray70", size = 15, family= "Segoe Print"),
+        title = element_text(color = "aquamarine4", size = 18, family = "Impact"), 
         plot.background = element_rect(fill = "aquamarine")) +
   annotate("text", x = 1970, y = "KR", label = "SPACE!", color = "purple") + 
   annotate("text", x = 2005, y = "I-ELDO", label = "WOWZA", color = "white") +
@@ -75,14 +84,57 @@ ggplot(comb_ys, aes(x = launch_year, y = state_code)) +
 ## Data wrangling
 
 ```{r}
-
+# Read in the data ----
+sf_ghg <- read_csv(here("data", "San_Francisco_Communitywide_Greenhouse_Gas_Inventory.csv")) %>% clean_names()
 ```
 
+```{r}
+ex_a <- sf_ghg %>% 
+  group_by(sector_general, calendar_year) %>% 
+  summarise(total_emissions = sum(emissions_mt_co2e))
+
+ex_b <- sf_ghg %>% 
+  group_by(commodity_type, calendar_year) %>% 
+  summarise(total_emissions = sum(emissions_mt_co2e))
+
+ex_c <- sf_ghg %>% 
+  filter(calendar_year >= 2005, sector_detail2 %in% str_subset(sf_ghg$sector_detail2, "PG&E")) %>%
+  select(calendar_year, sector_detail2, emissions_mt_co2e)
+```
 
 ## Do you data viz best
 
 ```{r}
-#Best possible viz ----
+# Wrangling ----
+summary(sf_ghg)
+length(unique(sf_ghg$sector_gpc_detail))
 
+pretty_plot <- sf_ghg %>% 
+  select(calendar_year, emissions_mt_co2e, sector_general) %>% 
+  group_by(sector_general, calendar_year) %>% 
+  summarise(total_emissions = sum(emissions_mt_co2e))
+```
+
+```{r}
+ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
+  geom_point(aes(color = sector_general), na.rm = TRUE) +
+scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
+  theme_minimal() +
+  labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
+       x = "Year", 
+       y = "CO2 Emissions (Mt CO2e)")
+```
+
+
+```{r}
+#Best possible viz ----
+ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
+  geom_area(aes(fill = sector_general), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
+  geom_line(aes(color = sector_general), na.rm = TRUE) +
+# scale_color_manual(values = brewer.pal(n = 6, name = "PuBuGn")) +
+  theme_minimal() +
+  labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
+       x = "Year", 
+       y = "CO2 Emissions (Mt CO2e)")
 ```
 
