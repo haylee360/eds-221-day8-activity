@@ -17,6 +17,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(skimr)
+library(extrafont)
 ```
 
 ## Do your data viz worst
@@ -32,10 +33,56 @@ space_launches <- read_csv(here("data", "space_launches.csv"))
 skim(space_launches)
 dim(space_launches)
 summary(space_launches)
+
+length(unique(space_launches$state_code))
 ```
 
 ```{r}
-# worst possible viz ----
-ggplot(space_launches, aes(x = ))
+# data wrangling ----
+year_state <- space_launches %>% 
+  group_by(state_code) %>% 
+  summarise(n = n())
+
+comb_ys <- left_join(year_state, space_launches, join_by(state_code))
+
+comb_ys <- comb_ys %>% 
+  select(state_code, n, launch_year) %>% 
+  filter(state_code != "NA")
+```
+
+```{r}
+# Worst possible viz ----
+ggplot(comb_ys, aes(x = launch_year, y = state_code)) + 
+  geom_tile(aes(fill = n)) +
+  scale_fill_gradientn(colors = c("slateblue4", "orangered", "olivedrab", "khaki")) +
+  theme(panel.background = element_rect(color = "purple", size = 12, fill = "yellow3"),
+        panel.grid.major = element_line(color = "red"),
+        axis.text.x = element_text(color = "blue"),
+        axis.text.y = element_text(color = "deeppink"),
+        axis.title.x = element_text(color = "yellowgreen"),
+        axis.title.y = element_text(color = "gray70"),
+        text = element_text(size = 13, family= "gabriola"),
+        title = element_text(color = "aquamarine4"), 
+        plot.background = element_rect(fill = "aquamarine")) +
+  annotate("text", x = 1970, y = "KR", label = "SPACE!", color = "purple") + 
+  annotate("text", x = 2005, y = "I-ELDO", label = "WOWZA", color = "white") +
+  labs(x = "year", 
+       y = "state", 
+       title = "yahoo")
+
+```
+
+## Data wrangling
+
+```{r}
+
+```
+
+
+## Do you data viz best
+
+```{r}
+#Best possible viz ----
+
 ```
 
