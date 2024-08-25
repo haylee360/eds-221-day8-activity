@@ -18,7 +18,7 @@ library(here)
 library(janitor)
 library(skimr)
 library(extrafont)
-library(ggimage)
+# library(ggimage)
 # Specifically for plots:
 library(patchwork)
 library(ggrepel)
@@ -119,9 +119,20 @@ pretty_plot <- sf_ghg %>%
 
 ```{r}
 ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
+<<<<<<< HEAD
   geom_point(aes(color = commodity_type)) +
   geom_line(aes(color = commodity_type)) +
   theme_minimal() +
+=======
+  geom_line(aes(color = sector_general), na.rm = TRUE) +
+scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
+  theme(panel.background = element_rect(fill = "gray90"), 
+        plot.background = element_rect(fill = "gray90"), 
+        panel.grid.major = element_line(color = "ghostwhite"), 
+        axis.title = element_text(color = "green3"), 
+        axis.text = element_text(color = "green4"), 
+        text = element_text(family = "Verdana")) +
+>>>>>>> 97e28722fc779003d43e4d30b3edcd8ed449cf78
   labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
        x = "Year", 
        y = "CO2 Emissions (Mt CO2e)")
