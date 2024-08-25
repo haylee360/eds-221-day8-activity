@@ -106,23 +106,30 @@ ex_c <- sf_ghg %>%
 
 ```{r}
 # Wrangling ----
+#WAIT lets make a viz where you can see both the sector and the fuel type and how they're changing over time. 
+
 summary(sf_ghg)
 length(unique(sf_ghg$sector_gpc_detail))
 
 pretty_plot <- sf_ghg %>% 
-  select(calendar_year, emissions_mt_co2e, sector_general) %>% 
-  group_by(sector_general, calendar_year) %>% 
+  select(calendar_year, emissions_mt_co2e, sector_general, sector_detail1, commodity_type) %>% 
+  group_by(commodity_type, calendar_year) %>% 
   summarise(total_emissions = sum(emissions_mt_co2e))
 ```
 
 ```{r}
 ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
-  geom_point(aes(color = sector_general), na.rm = TRUE) +
-scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
+  geom_point(aes(color = commodity_type)) +
+  geom_line(aes(color = commodity_type)) +
   theme_minimal() +
   labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
        x = "Year", 
        y = "CO2 Emissions (Mt CO2e)")
+
+# length(unique(sf_ghg$calendar_year)) = 10
+# length(unique(sf_ghg$sector_detail1)) = 14
+# length(unique(sf_ghg$sector_detail2)) = 46
+# length(unique(sf_ghg$commodity_type)) = 20
 ```
 
 
