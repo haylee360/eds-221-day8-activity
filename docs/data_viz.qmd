@@ -113,26 +113,22 @@ length(unique(sf_ghg$sector_gpc_detail))
 
 pretty_plot <- sf_ghg %>% 
   select(calendar_year, emissions_mt_co2e, sector_general, sector_detail1, commodity_type) %>% 
-  group_by(commodity_type, calendar_year) %>% 
+  group_by(sector_general, calendar_year) %>% 
   summarise(total_emissions = sum(emissions_mt_co2e))
 ```
 
 ```{r}
 ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
-<<<<<<< HEAD
-  geom_point(aes(color = commodity_type)) +
-  geom_line(aes(color = commodity_type)) +
+  # geom_point(aes(color = commodity_type)) +
+  geom_line(aes(color = sector_general)) +
   theme_minimal() +
-=======
-  geom_line(aes(color = sector_general), na.rm = TRUE) +
-scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
+# scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
   theme(panel.background = element_rect(fill = "gray90"), 
         plot.background = element_rect(fill = "gray90"), 
         panel.grid.major = element_line(color = "ghostwhite"), 
         axis.title = element_text(color = "green3"), 
         axis.text = element_text(color = "green4"), 
         text = element_text(family = "Verdana")) +
->>>>>>> 97e28722fc779003d43e4d30b3edcd8ed449cf78
   labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
        x = "Year", 
        y = "CO2 Emissions (Mt CO2e)")
@@ -147,9 +143,9 @@ scale_color_manual(values = brewer.pal(n = 6, name = "PRGn")) +
 ```{r}
 #Best possible viz ----
 ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
-  geom_area(aes(fill = sector_general), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
+  # geom_area(aes(fill = commodity_type), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
   geom_line(aes(color = sector_general), na.rm = TRUE) +
-# scale_color_manual(values = brewer.pal(n = 6, name = "PuBuGn")) +
+  scale_color_aoba(palette = "main", discrete = TRUE) +
   theme_minimal() +
   labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
        x = "Year", 
