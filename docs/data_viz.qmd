@@ -28,6 +28,7 @@ library(ggExtra)
 library(ggbeeswarm)
 library(ggstream)
 library(RColorBrewer)
+library(plotfun)
 ```
 
 ## Do your data viz worst
@@ -143,12 +144,47 @@ ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) +
 ```{r}
 #Best possible viz ----
 ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
-  # geom_area(aes(fill = commodity_type), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
-  geom_line(aes(color = sector_general), na.rm = TRUE) +
-  scale_color_aoba(palette = "main", discrete = TRUE) +
-  theme_minimal() +
+  geom_area(aes(fill = sector_general), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
+  scale_fill_aoba(palette = "aqua")+
+  geom_line(aes(color = sector_general), na.rm = TRUE, show.legend = FALSE) +
+  scale_color_aoba(palette = "aqua", discrete = TRUE) +
   labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
        x = "Year", 
-       y = "CO2 Emissions (Mt CO2e)")
+       y = "CO2 Emissions (Mt CO2e)") +
+  guides(fill = guide_legend(title = "Sector")) +
+  theme(
+    # add border 1)
+    panel.border = element_rect(colour = aoba_color("aqua2"), fill = NA, linetype = 1, size = 0.1),
+    # color background 2)
+    panel.background = element_rect(fill = "white"),
+    # change entire background
+    plot.background = element_rect(fill = "white"), 
+    # modify grid 3)
+    panel.grid.major.x = element_line(colour = aoba_color("aqua2"), linetype = 1, linewidth = 0.2),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y =  element_line(colour = aoba_color("aqua2"), linetype = 1, linewidth = 0.2),
+    panel.grid.minor.y = element_blank(),
+    # modify text, axis and colour 4) and 5)
+    axis.text = element_text(colour = aoba_color("aqua2"), face = "italic", family = "Times New Roman"),
+    axis.title = element_text(colour = aoba_color("aqua2"), family = "Times New Roman", size = 13),
+    axis.ticks = element_line(colour = aoba_color("aqua2"), linewidth = 0.2),
+    # legend at the bottom 6)
+    legend.position = "bottom", 
+    # title
+    title = element_text(colour = aoba_color("aqua3"), family = "Times New Roman", size = 14, face = "bold")
+  )
+```
+
+```{r}
+ggplot(pretty_plot, aes(x = calendar_year, y = total_emissions)) + 
+  geom_area(aes(fill = sector_general), stat = "identity", position = "stack", alpha = 0.5, na.rm = TRUE) +
+  scale_fill_aoba(palette = "aqua")+
+  geom_line(aes(color = sector_general), na.rm = TRUE, show.legend = FALSE) +
+  scale_color_aoba(palette = "aqua", discrete = TRUE) +
+  labs(title = "Total CO2 Emissions by Sector from 1990 to 2020", 
+       x = "Year", 
+       y = "CO2 Emissions (Mt CO2e)") +
+  guides(fill = guide_legend(title = "Sector")) +
+  theme_aoba()
 ```
 
